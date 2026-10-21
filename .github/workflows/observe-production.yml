@@ -1,0 +1,60 @@
+name: Observe Scene Igniter Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_commit:
+        description: Optional full production app commit to verify
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sceneigniter-production-observer
+  cancel-in-progress: true
+
+jobs:
+  observe:
+    # Standard public-repository compute is free. Never launch paid compute if
+    # someone changes this repository to private. Skipped is not healthy.
+    if: ${{ github.event.repository.private == false && github.event.repository.visibility == 'public' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test the observer
+        run: python3 -m unittest -q
+      - name: Observe public production endpoints
+        id: observation
+        continue-on-error: true
+        env:
+          EXPECTED_COMMIT: ${{ inputs.expected_commit }}
+        run: python3 observer.py --expected-commit "$EXPECTED_COMMIT"
+      - name: Save redacted run evidence
+        if: always()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ ! -f status/latest.json ]; then
+            printf '{"healthy":false,"error":"observer_did_not_complete"}\n' > /tmp/observer-missing.json
+            mkdir -p status
+            mv /tmp/observer-missing.json status/latest.json
+          fi
+          printf '## Production observer\n\nRun: %s\n\n```json\n' "$RUN_URL" >> "$GITHUB_STEP_SUMMARY"
+          cat status/latest.json >> "$GITHUB_STEP_SUMMARY"
+          printf '\n```\n' >> "$GITHUB_STEP_SUMMARY"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add status/latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record daily production observation'
+            git push origin HEAD:main
+          fi
+      - name: Require successful observation
+        if: always()
+        env:
+          OUTCOME: ${{ steps.observation.outcome }}
+        run: test "$OUTCOME" = success
