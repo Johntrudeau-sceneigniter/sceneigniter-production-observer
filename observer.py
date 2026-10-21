@@ -139,11 +139,17 @@ def write_report(result, destination):
     print(json.dumps(result, indent=2))
 
 
+def unavailable_report(now=None):
+    return {'checked_at': (now or dt.datetime.now(dt.timezone.utc)).isoformat(),
+            'healthy': False, 'error': 'observer_did_not_complete'}
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, default=Path('status/latest.json'))
     parser.add_argument('--expected-commit', default='')
+    parser.add_argument('--mark-unavailable', action='store_true')
     args = parser.parse_args()
-    snapshot = collect(expected=args.expected_commit)
+    snapshot = unavailable_report() if args.mark_unavailable else collect(expected=args.expected_commit)
     write_report(snapshot, args.output)
     raise SystemExit(0 if snapshot['healthy'] else 1)

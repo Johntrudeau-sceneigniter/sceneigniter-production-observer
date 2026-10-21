@@ -24,6 +24,8 @@ jobs:
     timeout-minutes: 7
     steps:
       - uses: actions/checkout@v4
+      - name: Clear previous observation before checking production
+        run: rm -f status/latest.json
       - name: Test the observer
         run: python3 -m unittest -q
       - name: Observe public production endpoints
@@ -39,9 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ ! -f status/latest.json ]; then
-            printf '{"healthy":false,"error":"observer_did_not_complete"}\n' > /tmp/observer-missing.json
-            mkdir -p status
-            mv /tmp/observer-missing.json status/latest.json
+            python3 observer.py --mark-unavailable || true
           fi
           printf '## Production observer\n\nRun: %s\n\n```json\n' "$RUN_URL" >> "$GITHUB_STEP_SUMMARY"
           cat status/latest.json >> "$GITHUB_STEP_SUMMARY"

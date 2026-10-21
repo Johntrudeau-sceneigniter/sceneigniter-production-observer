@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from observer import collect, operations, write_report
+from observer import collect, operations, unavailable_report, write_report
 
 
 def good_ops():
@@ -44,6 +44,19 @@ class Fixture:
 
 
 class ObserverTests(unittest.TestCase):
+    def test_incomplete_observation_never_reuses_an_old_healthy_snapshot(self):
+        now = dt.datetime(2026, 10, 21, 5, 30, tzinfo=dt.timezone.utc)
+        report = unavailable_report(now)
+        self.assertFalse(report['healthy'])
+        self.assertEqual(report['checked_at'], now.isoformat())
+        self.assertEqual(report['error'], 'observer_did_not_complete')
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'latest.json'
+            target.write_text('{"healthy":true,"checked_at":"old"}')
+            with redirect_stdout(io.StringIO()):
+                write_report(report, target)
+            self.assertFalse(json.loads(target.read_text())['healthy'])
+
     def test_healthy_observer_is_read_only_and_redacted(self):
         fixture = Fixture()
         result = collect(fixture, sleep=lambda _: self.fail('no healthy retries'),
