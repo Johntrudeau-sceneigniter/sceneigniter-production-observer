@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-21T16:00:17.656856+00:00",
+  "checked_at": "2026-10-21T16:08:11.114228+00:00",
   "healthy": false,
   "checks": {
     "api_database": true,
@@ -22,7 +22,7 @@
     "established_regions_present": true,
     "no_crawlers_need_attention": false,
     "no_unrecovered_failures": true,
-    "api_worker_commits_match": false,
+    "api_worker_commits_match": true,
     "expected_commit_matches": true
   }
 }
