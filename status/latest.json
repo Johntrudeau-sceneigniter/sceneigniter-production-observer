@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-03T12:57:05.743185+00:00",
+  "checked_at": "2026-11-04T13:12:48.074262+00:00",
   "healthy": false,
   "checks": {
     "api_database": true,
@@ -8,11 +8,11 @@
     "google_auth_redirect": true
   },
   "crawler_day": {
-    "2026-11-02": {
+    "2026-11-03": {
       "available": true,
       "closed": true
     },
-    "2026-11-03": {
+    "2026-11-04": {
       "available": true,
       "closed": false
     }
@@ -22,7 +22,7 @@
     "established_regions_present": true,
     "no_crawlers_need_attention": false,
     "no_unrecovered_failures": true,
-    "api_worker_commits_match": true,
+    "api_worker_commits_match": false,
     "expected_commit_matches": true
   }
 }
