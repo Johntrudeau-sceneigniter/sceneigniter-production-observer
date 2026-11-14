@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-13T13:21:34.148639+00:00",
+  "checked_at": "2026-11-14T12:26:05.435385+00:00",
   "healthy": false,
   "checks": {
     "api_database": true,
@@ -8,17 +8,17 @@
     "google_auth_redirect": true
   },
   "crawler_day": {
-    "2026-11-12": {
+    "2026-11-13": {
       "available": true,
       "closed": true
     },
-    "2026-11-13": {
+    "2026-11-14": {
       "available": false,
       "closed": false
     }
   },
   "operations": {
-    "endpoint_healthy": false,
+    "endpoint_healthy": true,
     "established_regions_present": true,
     "no_crawlers_need_attention": false,
     "no_unrecovered_failures": false,
