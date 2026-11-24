@@ -1,18 +1,18 @@
 {
-  "checked_at": "2026-11-23T16:22:16.057988+00:00",
+  "checked_at": "2026-11-24T16:12:28.729729+00:00",
   "healthy": false,
   "checks": {
     "api_database": true,
-    "public_profiles": false,
+    "public_profiles": true,
     "public_events": true,
     "google_auth_redirect": true
   },
   "crawler_day": {
-    "2026-11-22": {
+    "2026-11-23": {
       "available": true,
       "closed": true
     },
-    "2026-11-23": {
+    "2026-11-24": {
       "available": true,
       "closed": false
     }
